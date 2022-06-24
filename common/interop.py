@@ -280,6 +280,13 @@ def checkConditionalRequirement(propResourceObj, profile_entry, rf_payload_tuple
         # iterate through parents via resourceObj
         # list must be reversed to work backwards
         resourceParent = propResourceObj.parent
+
+        de = profile_entry["SubordinateToResource"] == [
+                "ComputerSystemCollection",
+                "ComputerSystem",
+                "ProcessorCollection",
+                "Processor"
+              ]
         for expectedParent in reversed(profile_entry["SubordinateToResource"]):
             if resourceParent is not None:
                 parentType = getType(resourceParent.jsondata.get('@odata.type', 'NoType'))
@@ -287,6 +294,10 @@ def checkConditionalRequirement(propResourceObj, profile_entry, rf_payload_tuple
                 my_logger.debug('\tsubordinance ' +
                                str(parentType) + ' ' + str(isSubordinate))
                 resourceParent = resourceParent.parent
+
+                if de:
+                    my_logger.error('\t'+'subordinance ' +
+                               str(parentType) + ' ' + str(isSubordinate))
             else:
                 my_logger.debug('no parent')
                 isSubordinate = False
